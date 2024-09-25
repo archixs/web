@@ -3,16 +3,20 @@
 $host = "localhost";
 $user = "php_app";
 $password = "1234";
-$database = "sql_store";
+$database = "sql_hr";
 
 $conn = new mysqli($host, $user, $password, $database);
 
 if($conn ->connect_error){
     die("Connection failed" . $conn->connection_error);
 }
-echo"COnnection successful";
+echo"Connection successful";
 
-$sql = "SELECT customer_id, first_name, last_name from customers";
+$sql = "SELECT e.employee_id, e.first_name, e.last_name, e.job_title, m.first_name AS manager_first_name 
+FROM employees e JOIN employees m 
+ON e.reports_to = m.employee_id;";
+
+
 
 $result = $conn->query($sql);
 
@@ -23,10 +27,10 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customers</title>
+    <title>Employees</title>
 </head>
 <body>
-    <h1>Customers</h1>
+    <h1>Employees</h1>
     
 
     <?php
@@ -35,12 +39,18 @@ $result = $conn->query($sql);
             while($row = $result->fetch_assoc()) {
                 // var_dump($row);
                 //izvadit katru klientu ar li elementu
-                echo "<li>Customer ID: " . $row["customer_id"] . "</li>";
+                echo "<li>Employee ID: " . $row["employee_id"] . " - Name: " . $row["first_name"] . " " . 
+                $row["last_name"] . " - Job Title: " . $row["job_title"] . 
+                " - Reports to: ". $row["manager_first_name"] . "</li>";
             }
             echo "</ul>";
         } else {
             echo 'No ucstomers found ';
         }
     ?>
+
+<form action="insert.php" method="post">
+        <input type="text" name="Form">
+</form>
 </body>
 </html>
